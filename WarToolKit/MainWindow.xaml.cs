@@ -26,7 +26,19 @@ namespace WarToolKit
                 FileList.ItemsSource = files;
 
                 StatusText.Text = "Folder loaded successfully.";
-                FileCountText.Text = $"{files.Count} BLP Files";
+                FolderPathText.Text = dialog.SelectedPath;
+
+                FolderFileCount.Text = $"{files.Count} texture files";
+            }
+        }
+
+        private void FileList_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if (FileList.SelectedItem is Models.TextureFile texture)
+            {
+                PreviewFilename.Text = texture.Name;
+                PreviewExtension.Text = texture.Extension;
+                PreviewSize.Text = texture.FormattedFileSize;
             }
         }
 

@@ -11,13 +11,13 @@
 
     <DockPanel>
 
-        <!-- Top Toolbar -->
+        <!-- Toolbar -->
         <ToolBar DockPanel.Dock="Top">
 
             <Button
                 x:Name="OpenFolderButton"
-                Content="📂 Open Folder"
                 Width="140"
+                Content="📂 Open Folder"
                 Click="OpenFolder_Click"/>
 
             <Separator/>
@@ -25,72 +25,146 @@
             <TextBox
                 x:Name="SearchBox"
                 Width="250"
-                Height="25"/>
+                Height="24"
+                VerticalContentAlignment="Center"/>
 
         </ToolBar>
 
-        <!-- Bottom Status Bar -->
+        <!-- Status Bar -->
         <StatusBar DockPanel.Dock="Bottom">
 
             <StatusBarItem>
-
-                <TextBlock
-                    x:Name="StatusText"
-                    Text="Ready"/>
-
+                <TextBlock x:Name="StatusText"
+                           Text="Ready"/>
             </StatusBarItem>
 
             <Separator/>
 
             <StatusBarItem>
-
-                <TextBlock
-                    x:Name="FileCountText"
-                    Text="0 Files"/>
-
+                <TextBlock x:Name="FileCountText"
+                           Text="0 Files"/>
             </StatusBarItem>
 
             <Separator/>
 
             <StatusBarItem>
-
-                <TextBlock
-                    Text="v0.1.0"/>
-
+                <TextBlock Text="WarToolkit v0.2"/>
             </StatusBarItem>
 
         </StatusBar>
 
-        <!-- Main Area -->
+        <!-- Main Grid -->
         <Grid>
 
-            <ListView
-                x:Name="FileList">
+            <Grid.ColumnDefinitions>
 
-                <ListView.View>
+                <ColumnDefinition Width="250"/>
 
-                    <GridView>
+                <ColumnDefinition Width="*"/>
 
-                        <GridViewColumn
-                            Header="Filename"
-                            Width="350"
-                            DisplayMemberBinding="{Binding Name}"/>
+                <ColumnDefinition Width="300"/>
 
-                        <GridViewColumn
-                            Header="Extension"
-                            Width="120"
-                            DisplayMemberBinding="{Binding Extension}"/>
+            </Grid.ColumnDefinitions>
 
-                        <GridViewColumn
-                            Header="Size (KB)"
-                            Width="120"
-                            DisplayMemberBinding="{Binding FileSizeKB}"/>
+            <!-- LEFT PANEL -->
+            <Border Grid.Column="0"
+                    Margin="5"
+                    BorderThickness="1"
+                    BorderBrush="Gray">
 
-                    </GridView>
+                <StackPanel Margin="10">
 
-                </ListView.View>
+                    <TextBlock
+                        FontWeight="Bold"
+                        FontSize="18"
+                        Text="Folder Information"/>
 
-            </ListView>
+                    <Separator Margin="0,10"/>
+
+                    <TextBlock
+                        x:Name="FolderPathText"
+                        Text="No Folder Selected"
+                        TextWrapping="Wrap"/>
+
+                    <TextBlock
+                        Margin="0,15,0,0"
+                        x:Name="FolderFileCount"
+                        Text="0 Files"/>
+
+                </StackPanel>
+
+            </Border>
+
+            <!-- CENTER PANEL -->
+
+            <Border Grid.Column="1"
+                    Margin="5"
+                    BorderThickness="1"
+                    BorderBrush="Gray">
+
+                <ListView
+                    x:Name="FileList"
+                    SelectionChanged="FileList_SelectionChanged">
+
+                    <ListView.View>
+
+                        <GridView>
+
+                            <GridViewColumn Header="Filename"
+                                            Width="350"
+                                            DisplayMemberBinding="{Binding Name}"/>
+
+                            <GridViewColumn Header="Extension"
+                                            Width="80"
+                                            DisplayMemberBinding="{Binding Extension}"/>
+
+                            <GridViewColumn Header="Size"
+                                            Width="100"
+                                            DisplayMemberBinding="{Binding FormattedFileSize}"/>
+
+                        </GridView>
+
+                    </ListView.View>
+
+                </ListView>
+
+            </Border>
+
+            <!-- RIGHT PANEL -->
+
+            <Border Grid.Column="2"
+                    Margin="5"
+                    BorderThickness="1"
+                    BorderBrush="Gray">
+
+                <StackPanel Margin="10">
+
+                    <TextBlock
+                        FontWeight="Bold"
+                        FontSize="18"
+                        Text="Preview"/>
+
+                    <Separator Margin="0,10"/>
+
+                    <TextBlock Text="Filename:" FontWeight="Bold"/>
+
+                    <TextBlock x:Name="PreviewFilename"/>
+
+                    <TextBlock Margin="0,15,0,0"
+                               Text="Extension:"
+                               FontWeight="Bold"/>
+
+                    <TextBlock x:Name="PreviewExtension"/>
+
+                    <TextBlock Margin="0,15,0,0"
+                               Text="File Size:"
+                               FontWeight="Bold"/>
+
+                    <TextBlock x:Name="PreviewSize"/>
+
+                </StackPanel>
+
+            </Border>
 
         </Grid>
 

@@ -24,11 +24,14 @@ namespace WarToolKit.Models
             FileSize = file.Length;
             Extension = file.Extension;
         }
-        public long FileSizeKB
+        public string FormattedFileSize
         {
             get
             {
-                return FileSize / 1024;
+                if (FileSize >= 1024 * 1024)
+                    return $"{FileSize / 1024.0 / 1024.0:F2} MB";
+
+                return $"{FileSize / 1024.0:F0} KB";
             }
         }
 
