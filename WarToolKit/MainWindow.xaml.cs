@@ -28,6 +28,7 @@ namespace WarToolKit
                 StatusText.Text = "Folder loaded successfully.";
                 FolderPathText.Text = dialog.SelectedPath;
 
+                FileCountText.Text = $"{files.Count} Files";
                 FolderFileCount.Text = $"{files.Count} texture files";
             }
         }
