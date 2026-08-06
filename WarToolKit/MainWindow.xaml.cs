@@ -36,9 +36,7 @@ namespace WarToolKit
         {
             if (FileList.SelectedItem is Models.TextureFile texture)
             {
-                PreviewFilename.Text = texture.Name;
-                PreviewExtension.Text = texture.Extension;
-                PreviewSize.Text = texture.FormattedFileSize;
+                PreviewPanel.Display(texture);
             }
         }
 
