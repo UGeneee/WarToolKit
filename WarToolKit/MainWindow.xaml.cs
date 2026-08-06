@@ -25,8 +25,10 @@ namespace WarToolKit
 
                 FileList.ItemsSource = files;
 
-                FileCountText.Text = $"{files.Count} Files Found";
+                StatusText.Text = "Folder loaded successfully.";
+                FileCountText.Text = $"{files.Count} BLP Files";
             }
         }
+
     }
 }

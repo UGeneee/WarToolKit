@@ -9,38 +9,90 @@
         Height="650" 
         Width="1000">
 
-    <Grid Margin="10">
+    <DockPanel>
 
-        <Grid.RowDefinitions>
+        <!-- Top Toolbar -->
+        <ToolBar DockPanel.Dock="Top">
 
-            <RowDefinition Height="Auto"/>
+            <Button
+                x:Name="OpenFolderButton"
+                Content="📂 Open Folder"
+                Width="140"
+                Click="OpenFolder_Click"/>
 
-            <RowDefinition Height="Auto"/>
+            <Separator/>
 
-            <RowDefinition/>
+            <TextBox
+                x:Name="SearchBox"
+                Width="250"
+                Height="25"/>
 
-        </Grid.RowDefinitions>
+        </ToolBar>
 
-        <Button
-            x:Name="OpenFolderButton"
-            Content="📂 Open Folder"
-            Width="150"
-            Height="35"
-            Click="OpenFolder_Click"/>
+        <!-- Bottom Status Bar -->
+        <StatusBar DockPanel.Dock="Bottom">
 
-        <TextBlock
-            x:Name="FileCountText"
-            Grid.Row="1"
-            Margin="0,10"
-            FontSize="18"
-            FontWeight="Bold"
-            Text="0 Files Found"/>
+            <StatusBarItem>
 
-        <ListBox
-            x:Name="FileList"
-            Grid.Row="2"
-            Margin="0,10,0,0"
-            DisplayMemberPath="Name"/>
+                <TextBlock
+                    x:Name="StatusText"
+                    Text="Ready"/>
 
-    </Grid>
+            </StatusBarItem>
+
+            <Separator/>
+
+            <StatusBarItem>
+
+                <TextBlock
+                    x:Name="FileCountText"
+                    Text="0 Files"/>
+
+            </StatusBarItem>
+
+            <Separator/>
+
+            <StatusBarItem>
+
+                <TextBlock
+                    Text="v0.1.0"/>
+
+            </StatusBarItem>
+
+        </StatusBar>
+
+        <!-- Main Area -->
+        <Grid>
+
+            <ListView
+                x:Name="FileList">
+
+                <ListView.View>
+
+                    <GridView>
+
+                        <GridViewColumn
+                            Header="Filename"
+                            Width="350"
+                            DisplayMemberBinding="{Binding Name}"/>
+
+                        <GridViewColumn
+                            Header="Extension"
+                            Width="120"
+                            DisplayMemberBinding="{Binding Extension}"/>
+
+                        <GridViewColumn
+                            Header="Size (KB)"
+                            Width="120"
+                            DisplayMemberBinding="{Binding FileSizeKB}"/>
+
+                    </GridView>
+
+                </ListView.View>
+
+            </ListView>
+
+        </Grid>
+
+    </DockPanel>
 </Window>

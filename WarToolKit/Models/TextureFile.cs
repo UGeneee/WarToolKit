@@ -24,5 +24,13 @@ namespace WarToolKit.Models
             FileSize = file.Length;
             Extension = file.Extension;
         }
+        public long FileSizeKB
+        {
+            get
+            {
+                return FileSize / 1024;
+            }
+        }
+
     }
 }
