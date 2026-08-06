@@ -5,15 +5,42 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WarToolKit"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="WarToolKit" 
+        Height="650" 
+        Width="1000">
+
+    <Grid Margin="10">
+
+        <Grid.RowDefinitions>
+
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition Height="Auto"/>
+
+            <RowDefinition/>
+
+        </Grid.RowDefinitions>
+
+        <Button
+            x:Name="OpenFolderButton"
+            Content="📂 Open Folder"
+            Width="150"
+            Height="35"
+            Click="OpenFolder_Click"/>
 
         <TextBlock
-            Text="Welcome to WarToolkit!"
-            FontSize="30"
+            x:Name="FileCountText"
+            Grid.Row="1"
+            Margin="0,10"
+            FontSize="18"
             FontWeight="Bold"
-            HorizontalAlignment="Center"
-            VerticalAlignment="Center"/>
-        
+            Text="0 Files Found"/>
+
+        <ListBox
+            x:Name="FileList"
+            Grid.Row="2"
+            Margin="0,10,0,0"
+            DisplayMemberPath="Name"/>
+
     </Grid>
 </Window>

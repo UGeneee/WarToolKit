@@ -1,13 +1,5 @@
-﻿using System.Text;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using WarToolKit.Services;
 
 namespace WarToolKit
 {
@@ -16,9 +8,25 @@ namespace WarToolKit
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly FileScanner scanner = new();
+
         public MainWindow()
         {
             InitializeComponent();
+        }
+
+        private void OpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            using FolderBrowserDialog dialog = new();
+
+            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                var files = scanner.ScanFolder(dialog.SelectedPath);
+
+                FileList.ItemsSource = files;
+
+                FileCountText.Text = $"{files.Count} Files Found";
+            }
         }
     }
 }
