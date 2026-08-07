@@ -15,14 +15,17 @@
 
     <DockPanel>
 
-        <!-- Toolbar -->
+        <!-- ========================================================= -->
+        <!-- TOOLBAR -->
+        <!-- ========================================================= -->
+
         <ToolBar DockPanel.Dock="Top">
 
             <Button
-                x:Name="OpenFolderButton"
-                Width="140"
-                Content="📂 Open Folder"
-                Click="OpenFolder_Click"/>
+            x:Name="OpenFolderButton"
+            Width="140"
+            Content="📂 Open Folder"
+            Click="OpenFolder_Click"/>
 
             <Separator/>
 
@@ -35,30 +38,47 @@
 
         </ToolBar>
 
-        <!-- Status Bar -->
+
+        <!-- ========================================================= -->
+        <!-- STATUS BAR -->
+        <!-- ========================================================= -->
+
         <StatusBar DockPanel.Dock="Bottom">
 
             <StatusBarItem>
-                <TextBlock x:Name="StatusText"
-                           Text="Ready"/>
+
+                <TextBlock
+                x:Name="StatusText"
+                Text="Ready"/>
+
             </StatusBarItem>
 
             <Separator/>
 
             <StatusBarItem>
-                <TextBlock x:Name="FileCountText"
-                           Text="0 Files"/>
+
+                <TextBlock
+                x:Name="FileCountText"
+                Text="0 Files"/>
+
             </StatusBarItem>
 
             <Separator/>
 
             <StatusBarItem>
-                <TextBlock Text="WarToolkit v0.2"/>
+
+                <TextBlock
+                Text="WarToolkit v0.2"/>
+
             </StatusBarItem>
 
         </StatusBar>
 
-        <!-- Main Grid -->
+
+        <!-- ========================================================= -->
+        <!-- MAIN GRID -->
+        <!-- ========================================================= -->
+
         <Grid>
 
             <Grid.ColumnDefinitions>
@@ -71,66 +91,83 @@
 
             </Grid.ColumnDefinitions>
 
+
+            <!-- ===================================================== -->
             <!-- LEFT PANEL -->
-            <Border Grid.Column="0"
-                    Margin="5"
-                    BorderThickness="1"
-                    BorderBrush="Gray">
+            <!-- ===================================================== -->
+
+            <Border
+            Grid.Column="0"
+            Margin="5"
+            BorderThickness="1"
+            BorderBrush="Gray">
 
                 <StackPanel Margin="10">
 
                     <TextBlock
-                        FontWeight="Bold"
-                        FontSize="18"
-                        Text="Folder Information"/>
+                    FontWeight="Bold"
+                    FontSize="18"
+                    Text="Folder Information"/>
 
-                    <Separator Margin="0,10"/>
-
-                    <TextBlock
-                        x:Name="FolderPathText"
-                        Text="No Folder Selected"
-                        TextWrapping="Wrap"/>
+                    <Separator
+                    Margin="0,10"/>
 
                     <TextBlock
-                        Margin="0,15,0,0"
-                        x:Name="FolderFileCount"
-                        Text="0 Files"/>
+                    x:Name="FolderPathText"
+                    Text="No Folder Selected"
+                    TextWrapping="Wrap"/>
+
+                    <TextBlock
+                    Margin="0,15,0,0"
+                    x:Name="FolderFileCount"
+                    Text="0 Files"/>
 
                 </StackPanel>
 
             </Border>
 
+
+            <!-- ===================================================== -->
             <!-- CENTER PANEL -->
+            <!-- ===================================================== -->
 
-            <Border Grid.Column="1"
-                    Margin="5"
-                    BorderThickness="1"
-                    BorderBrush="Gray">
+            <Border
+            Grid.Column="1"
+            Margin="5"
+            BorderThickness="1"
+            BorderBrush="Gray">
 
-                <TabControl Grid.Column="1">
+                <TabControl>
+
+
+                    <!-- ================================================= -->
+                    <!-- TEXTURES TAB -->
+                    <!-- ================================================= -->
 
                     <TabItem Header="Textures">
 
                         <ListView
-    x:Name="FileList"
-    SelectionChanged="FileList_SelectionChanged"
-    GridViewColumnHeader.Click="GridViewColumnHeader_Click">
+                        x:Name="FileList"
+                        SelectionChanged="FileList_SelectionChanged">
 
                             <ListView.View>
 
                                 <GridView>
 
-                                    <GridViewColumn Header="Filename"
-                Width="350"
-                DisplayMemberBinding="{Binding Name}"/>
+                                    <GridViewColumn
+                                    Header="Filename"
+                                    Width="350"
+                                    DisplayMemberBinding="{Binding Name}"/>
 
-                                    <GridViewColumn Header="Extension"
-                Width="80"
-                DisplayMemberBinding="{Binding Extension}"/>
+                                    <GridViewColumn
+                                    Header="Extension"
+                                    Width="80"
+                                    DisplayMemberBinding="{Binding Extension}"/>
 
-                                    <GridViewColumn Header="Size"
-                Width="100"
-                DisplayMemberBinding="{Binding FormattedFileSize}"/>
+                                    <GridViewColumn
+                                    Header="Size"
+                                    Width="100"
+                                    DisplayMemberBinding="{Binding FormattedFileSize}"/>
 
                                 </GridView>
 
@@ -140,12 +177,268 @@
 
                     </TabItem>
 
+
+                    <!-- ================================================= -->
+                    <!-- MODELS TAB -->
+                    <!-- ================================================= -->
+
                     <TabItem Header="Models">
 
-                        <TextBlock
-            Margin="20"
-            FontSize="16"
-            Text="MDX support coming soon..." />
+                        <ListView
+                        x:Name="ModelList"
+                        SelectionChanged="ModelList_SelectionChanged">
+
+                            <ListView.View>
+
+                                <GridView>
+
+                                    <GridViewColumn
+                                    Header="Filename"
+                                    Width="300"
+                                    DisplayMemberBinding="{Binding Name}"/>
+
+                                    <GridViewColumn
+                                    Header="Version"
+                                    Width="80"
+                                    DisplayMemberBinding="{Binding Version}"/>
+
+                                    <GridViewColumn
+                                    Header="Textures"
+                                    Width="80"
+                                    DisplayMemberBinding="{Binding TextureCount}"/>
+
+                                </GridView>
+
+                            </ListView.View>
+
+                        </ListView>
+
+                    </TabItem>
+
+                    <TabItem Header="MDX Textures">
+
+                        <Grid>
+
+                            <Grid.ColumnDefinitions>
+
+                                <ColumnDefinition Width="250"/>
+
+                                <ColumnDefinition Width="*"/>
+
+                            </Grid.ColumnDefinitions>
+
+
+                            <!-- MDX texture references -->
+
+                            <Border
+            Grid.Column="0"
+            Margin="5"
+            BorderThickness="1"
+            BorderBrush="Gray">
+
+                                <DockPanel>
+
+                                    <TextBlock
+                    DockPanel.Dock="Top"
+                    Margin="8"
+                    FontWeight="Bold"
+                    Text="Texture References"/>
+
+                                    <ListView
+                    x:Name="MDXTextureList"
+                    SelectionChanged="MDXTextureList_SelectionChanged">
+
+                                        <ListView.View>
+
+                                            <GridView>
+
+                                                <GridViewColumn
+                                Header="Texture"
+                                Width="220"
+                                DisplayMemberBinding="{Binding}"/>
+
+                                            </GridView>
+
+                                        </ListView.View>
+
+                                    </ListView>
+
+                                </DockPanel>
+
+                            </Border>
+
+
+                            <!-- Candidates -->
+
+                            <Border
+            Grid.Column="1"
+            Margin="5"
+            BorderThickness="1"
+            BorderBrush="Gray">
+
+                                <DockPanel>
+
+                                    <TextBlock
+                    x:Name="MDXTextureCandidateTitle"
+                    DockPanel.Dock="Top"
+                    Margin="8"
+                    FontWeight="Bold"
+                    Text="Candidates"/>
+
+                                    <ListView
+                    x:Name="MDXTextureCandidatesList">
+
+                                        <ListView.View>
+
+                                            <GridView>
+
+                                                <GridViewColumn
+                                Header="BLP"
+                                Width="180"
+                                DisplayMemberBinding="{Binding FileName}"/>
+
+                                                <GridViewColumn
+                                Header="Resolution"
+                                Width="110">
+
+                                                    <GridViewColumn.CellTemplate>
+
+                                                        <DataTemplate>
+
+                                                            <TextBlock>
+
+                                            <Run Text="{Binding Width}"/>
+                                            <Run Text=" × "/>
+                                            <Run Text="{Binding Height}"/>
+
+                                                            </TextBlock>
+
+                                                        </DataTemplate>
+
+                                                    </GridViewColumn.CellTemplate>
+
+                                                </GridViewColumn>
+
+                                                <GridViewColumn
+                                Header="Compression"
+                                Width="110"
+                                DisplayMemberBinding="{Binding Compression}"/>
+
+                                                <GridViewColumn
+                                Header="Size"
+                                Width="110">
+
+                                                    <GridViewColumn.CellTemplate>
+
+                                                        <DataTemplate>
+
+                                                            <TextBlock
+                                            Text="{Binding FileSize, StringFormat={}{0:N0} bytes}"/>
+
+                                                        </DataTemplate>
+
+                                                    </GridViewColumn.CellTemplate>
+
+                                                </GridViewColumn>
+
+                                            </GridView>
+
+                                        </ListView.View>
+
+                                    </ListView>
+
+                                </DockPanel>
+
+                            </Border>
+
+                        </Grid>
+
+                    </TabItem>
+
+
+                    <!-- ================================================= -->
+                    <!-- EXTRACTED BLPS TAB -->
+                    <!-- ================================================= -->
+
+                    <TabItem Header="Extracted BLPs">
+
+                        <DockPanel>
+
+                            <!-- BLP Search -->
+                            <TextBox
+            x:Name="ExtractedBLPSearchBox"
+            DockPanel.Dock="Top"
+            Margin="5"
+            Height="26"
+            VerticalContentAlignment="Center"
+            TextChanged="ExtractedBLPSearchBox_TextChanged"/>
+
+                            <ListView
+            x:Name="ExtractedBLPList"
+            SelectionChanged="ExtractedBLPList_SelectionChanged">
+
+                                <ListView.View>
+
+                                    <GridView>
+
+                                        <GridViewColumn
+                        Header="Filename"
+                        Width="180"
+                        DisplayMemberBinding="{Binding FileName}"/>
+
+                                        <GridViewColumn
+                        Header="Resolution"
+                        Width="110">
+
+                                            <GridViewColumn.CellTemplate>
+
+                                                <DataTemplate>
+
+                                                    <TextBlock>
+
+                                    <Run Text="{Binding Width}"/>
+
+                                    <Run Text=" × "/>
+
+                                    <Run Text="{Binding Height}"/>
+
+                                                    </TextBlock>
+
+                                                </DataTemplate>
+
+                                            </GridViewColumn.CellTemplate>
+
+                                        </GridViewColumn>
+
+                                        <GridViewColumn
+                        Header="Compression"
+                        Width="110"
+                        DisplayMemberBinding="{Binding Compression}"/>
+
+                                        <GridViewColumn
+                        Header="Size"
+                        Width="110">
+
+                                            <GridViewColumn.CellTemplate>
+
+                                                <DataTemplate>
+
+                                                    <TextBlock
+                                    Text="{Binding FileSize, StringFormat={}{0:N0} bytes}"/>
+
+                                                </DataTemplate>
+
+                                            </GridViewColumn.CellTemplate>
+
+                                        </GridViewColumn>
+
+                                    </GridView>
+
+                                </ListView.View>
+
+                            </ListView>
+
+                        </DockPanel>
 
                     </TabItem>
 
@@ -153,12 +446,15 @@
 
             </Border>
 
+
+            <!-- ===================================================== -->
             <!-- RIGHT PANEL -->
+            <!-- ===================================================== -->
 
             <controls:PreviewPanel
-                x:Name="PreviewPanel"
-                Grid.Column="2"
-                Margin="5"/>
+            x:Name="PreviewPanel"
+            Grid.Column="2"
+            Margin="5"/>
 
         </Grid>
 

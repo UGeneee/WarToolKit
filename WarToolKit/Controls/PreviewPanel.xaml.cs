@@ -15,10 +15,13 @@ namespace WarToolKit.Controls
             InitializeComponent();
         }
 
+        // =========================================================
+        // DISPLAY BLP TEXTURE
+        // =========================================================
+
         public void Display(TextureFile texture)
         {
-            FileNameText.Text =
-                texture.Name;
+            FileNameText.Text = texture.Name;
 
             SizeText.Text =
                 $"Size: {texture.FormattedFileSize}";
@@ -27,22 +30,21 @@ namespace WarToolKit.Controls
 
             try
             {
-                // -----------------------------------------
                 // Read BLP header
-                // -----------------------------------------
-
                 var info =
                     reader.ReadHeader(texture.FullPath);
 
+                // Display resolution
                 ResolutionText.Text =
                     $"Resolution: {info.Width} x {info.Height}";
 
+                // Display format
                 FormatText.Text =
-                    $"Format: {info.Magic} ({info.Compression})";
+                    $"Format: BLP1 ({info.Compression})";
 
-                // -----------------------------------------
-                // Read first mipmap
-                // -----------------------------------------
+                // =================================================
+                // JPEG-COMPRESSED BLP
+                // =================================================
 
                 if (info.Compression == BLPCompression.JPEG)
                 {
@@ -52,9 +54,13 @@ namespace WarToolKit.Controls
                     var image =
                         ImageDecoder.DecodeJpeg(mip);
 
-                    PreviewImage.Source =
-                        image;
+                    PreviewImage.Source = image;
                 }
+
+                // =================================================
+                // PALETTE-COMPRESSED BLP
+                // =================================================
+
                 else if (info.Compression == BLPCompression.Palette)
                 {
                     var paletteReader =
@@ -70,13 +76,7 @@ namespace WarToolKit.Controls
                             info.Width,
                             info.Height);
 
-                    PreviewImage.Source =
-                        image;
-                }
-                else
-                {
-                    throw new NotSupportedException(
-                        $"Unsupported BLP compression: {info.Compression}");
+                    PreviewImage.Source = image;
                 }
             }
             catch (Exception ex)
@@ -90,10 +90,48 @@ namespace WarToolKit.Controls
                 PreviewImage.Source = null;
 
                 System.Windows.MessageBox.Show(
-                    ex.ToString(),
-                    "BLP Preview Error",
+                    ex.Message,
+                    "ERROR",
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
+            }
+        }
+
+        // =========================================================
+        // DISPLAY MDX MODEL INFORMATION
+        // =========================================================
+
+        public void DisplayModel(MDXFile model)
+        {
+            // Model filename
+            FileNameText.Text =
+                model.Name;
+
+            // Models don't have a normal file-size display yet
+            SizeText.Text =
+                "MDX Model";
+
+            // We don't have a 3D renderer yet
+            PreviewImage.Source = null;
+
+            // Show MDX version
+            ResolutionText.Text =
+                $"Version: {model.Version}";
+
+            // Show number of textures
+            FormatText.Text =
+                $"Textures: {model.Textures.Count}";
+        }
+
+        private void ModelTextureList_SelectionChanged(
+    object sender,
+    SelectionChangedEventArgs e)
+        {
+            if (ModelTextureList.SelectedItem is string texturePath)
+            {
+                System.Windows.MessageBox.Show(
+                    texturePath,
+                    "MDX Texture Reference");
             }
         }
     }

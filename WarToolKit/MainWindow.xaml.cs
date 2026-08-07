@@ -5,9 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+
 using WarToolKit.Models;
 using WarToolKit.Parsers;
 using WarToolKit.Services;
+
 using DataFormats = System.Windows.DataFormats;
 
 namespace WarToolKit
@@ -24,6 +26,10 @@ namespace WarToolKit
         private List<TextureFile> allFiles = new();
 
         private List<TextureFile> filteredFiles = new();
+
+        private List<MDXFile> modelFiles = new();
+
+        private List<ExtractedBLPInfo> extractedBLPs = new();
 
 
         // =========================================================
@@ -52,6 +58,10 @@ namespace WarToolKit
         public MainWindow()
         {
             InitializeComponent();
+
+            // TEST PROTECTED MAP SCANNER
+            TestProtectedMapScanner(
+                @"C:\Dota\Maps\Download\DotA_LoD_7.01f.w3x");
         }
 
 
@@ -78,7 +88,8 @@ namespace WarToolKit
 
             ListSortDirection direction;
 
-            // Click the same column again -> reverse direction
+
+            // Click same column again -> reverse direction
             if (headerClicked == lastHeaderClicked)
             {
                 direction =
@@ -209,8 +220,8 @@ namespace WarToolKit
         // =========================================================
 
         private void Window_DragOver(
-    object sender,
-    System.Windows.DragEventArgs e)
+            object sender,
+            System.Windows.DragEventArgs e)
         {
             if (e.Data.GetDataPresent(
                 System.Windows.DataFormats.FileDrop))
@@ -224,6 +235,7 @@ namespace WarToolKit
                     System.Windows.DragDropEffects.None;
             }
 
+
             e.Handled = true;
         }
 
@@ -233,8 +245,8 @@ namespace WarToolKit
         // =========================================================
 
         private void Window_Drop(
-    object sender,
-    System.Windows.DragEventArgs e)
+            object sender,
+            System.Windows.DragEventArgs e)
         {
             if (!e.Data.GetDataPresent(
                 System.Windows.DataFormats.FileDrop))
@@ -242,41 +254,67 @@ namespace WarToolKit
                 return;
             }
 
+
             string[] files =
                 (string[])e.Data.GetData(
                     System.Windows.DataFormats.FileDrop)!;
 
+
             foreach (string file in files)
             {
-                if (Path.GetExtension(file)
+                if (!Path.GetExtension(file)
                     .Equals(
                         ".mdx",
                         StringComparison.OrdinalIgnoreCase))
                 {
-                    try
-                    {
-                        var model =
-                            mdxParser.Read(file);
+                    continue;
+                }
 
-                        string text =
-                            $"Model: {model.Name}\n" +
-                            $"Version: {model.Version}\n\n";
 
-                        foreach (string tex in model.Textures)
+                try
+                {
+                    var model =
+                        mdxParser.Read(file);
+
+
+                    var mdxFile =
+                        new MDXFile
                         {
-                            text += tex + "\n";
-                        }
+                            Name =
+                                Path.GetFileName(file),
 
-                        System.Windows.MessageBox.Show(
-                            text,
-                            "MDX Information");
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Windows.MessageBox.Show(
-                            ex.Message,
-                            "MDX Error");
-                    }
+                            FullPath =
+                                file,
+
+                            Version =
+                                model.Version,
+
+                            Textures =
+                                new List<string>(
+                                    model.Textures)
+                        };
+
+
+                    modelFiles.Add(
+                        mdxFile);
+
+
+                    ModelList.ItemsSource =
+                        modelFiles;
+
+
+                    System.Windows.MessageBox.Show(
+                        $"Model loaded successfully!\n\n" +
+                        $"Model: {mdxFile.Name}\n" +
+                        $"Version: {mdxFile.Version}\n" +
+                        $"Textures: {mdxFile.TextureCount}",
+                        "MDX Model");
+                }
+                catch (Exception ex)
+                {
+                    System.Windows.MessageBox.Show(
+                        ex.Message,
+                        "MDX Error");
                 }
             }
         }
@@ -290,7 +328,8 @@ namespace WarToolKit
             object sender,
             RoutedEventArgs e)
         {
-            using FolderBrowserDialog dialog = new();
+            using FolderBrowserDialog dialog =
+                new();
 
 
             if (dialog.ShowDialog() !=
@@ -300,14 +339,14 @@ namespace WarToolKit
             }
 
 
-            // THIS was the missing variable
             string folderPath =
                 dialog.SelectedPath;
 
 
-            // Scan the selected folder
+            // Scan selected folder
             var files =
-                scanner.ScanFolder(folderPath);
+                scanner.ScanFolder(
+                    folderPath);
 
 
             // Store all files
@@ -317,7 +356,8 @@ namespace WarToolKit
 
             // Initially show everything
             filteredFiles =
-                new List<TextureFile>(allFiles);
+                new List<TextureFile>(
+                    allFiles);
 
 
             // Display files
@@ -354,8 +394,246 @@ namespace WarToolKit
             if (FileList.SelectedItem
                 is TextureFile texture)
             {
-                PreviewPanel.Display(texture);
+                PreviewPanel.Display(
+                    texture);
             }
+        }
+
+
+        // =========================================================
+        // MODEL SELECTION
+        // =========================================================
+
+        private void ModelList_SelectionChanged(
+    object sender,
+    SelectionChangedEventArgs e)
+        {
+            if (ModelList.SelectedItem
+                is MDXFile model)
+            {
+                PreviewPanel.DisplayModel(model);
+
+                MDXTextureList.ItemsSource =
+                    model.Textures;
+
+                MDXTextureCandidatesList.ItemsSource =
+                    null;
+
+                MDXTextureCandidateTitle.Text =
+                    "Candidates";
+            }
+        }
+
+
+        // =========================================================
+        // PROTECTED MAP SCANNER
+        // =========================================================
+
+        private void TestProtectedMapScanner(
+            string mapPath)
+        {
+            try
+            {
+                var protectedScanner =
+                    new ProtectedMapScanner();
+
+
+                // -------------------------------------------------
+                // STEP 1:
+                // Find all embedded BLP headers
+                // -------------------------------------------------
+
+                var blps =
+                    protectedScanner.ReadBLPHeaders(
+                        mapPath);
+
+
+                // -------------------------------------------------
+                // STEP 2:
+                // Extract ALL BLPs
+                // -------------------------------------------------
+
+                string mapDirectory =
+                    Path.GetDirectoryName(
+                        mapPath)!;
+
+
+                string outputFolder =
+                    Path.Combine(
+                        mapDirectory,
+                        "ExtractedBLPs");
+
+
+                int extracted =
+                    protectedScanner.ExtractAllBLPs(
+                        mapPath,
+                        outputFolder);
+
+                var index =
+    protectedScanner.BuildExtractedBLPIndex(
+        mapPath,
+        outputFolder);
+
+                extractedBLPs =
+    index;
+
+                ExtractedBLPList.ItemsSource =
+                    extractedBLPs;
+
+
+                // -------------------------------------------------
+                // STEP 3:
+                // Build information for the message
+                // -------------------------------------------------
+
+                string text =
+                    $"Protected Map Scanner\n\n" +
+
+                    $"BLP files found: " +
+                    $"{blps.Count}\n\n" +
+
+                    $"BLPs extracted: " +
+                    $"{extracted}\n\n" +
+
+                    $"Output folder:\n" +
+                    $"{outputFolder}";
+
+
+                // -------------------------------------------------
+                // STEP 4:
+                // Show first 10 BLPs
+                // -------------------------------------------------
+
+                text +=
+                    $"\nIndexed BLPs: {index.Count}\n\n";
+
+
+                int count =
+                    Math.Min(
+                        10,
+                        blps.Count);
+
+                int indexCount =
+    Math.Min(10, index.Count);
+
+                for (int i = 0;
+                     i < indexCount;
+                     i++)
+                {
+                    text +=
+                        index[i].ToString() +
+                        "\n";
+                }
+
+
+                for (int i = 0;
+                     i < count;
+                     i++)
+                {
+                    var blp =
+                        blps[i];
+
+
+                    text +=
+                        $"#{blp.Index} | " +
+                        $"{blp.Width}x{blp.Height} | " +
+                        $"Compression: " +
+                        $"{blp.Compression} | " +
+                        $"Offset: " +
+                        $"{blp.Offset}\n";
+                }
+
+
+                // -------------------------------------------------
+                // STEP 5:
+                // Show result
+                // -------------------------------------------------
+
+                System.Windows.MessageBox.Show(
+                    text,
+                    "Protected BLP Extraction");
+            }
+            catch (Exception ex)
+            {
+                System.Windows.MessageBox.Show(
+                    ex.ToString(),
+                    "Scanner Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
+        }
+
+        private void ExtractedBLPList_SelectionChanged(
+    object sender,
+    SelectionChangedEventArgs e)
+        {
+            if (ExtractedBLPList.SelectedItem
+                is ExtractedBLPInfo blp)
+            {
+                var texture =
+                    new TextureFile(
+                        new FileInfo(blp.FullPath));
+
+                PreviewPanel.Display(
+                    texture);
+            }
+        }
+
+        private void ExtractedBLPSearchBox_TextChanged(
+    object sender,
+    TextChangedEventArgs e)
+        {
+            string search =
+                ExtractedBLPSearchBox.Text.Trim();
+
+            if (string.IsNullOrWhiteSpace(search))
+            {
+                ExtractedBLPList.ItemsSource =
+                    extractedBLPs;
+
+                return;
+            }
+
+            var results =
+                extractedBLPs
+                    .Where(blp =>
+                        blp.FileName.Contains(
+                            search,
+                            StringComparison.OrdinalIgnoreCase)
+
+                        ||
+
+                        $"{blp.Width}x{blp.Height}"
+                            .Contains(
+                                search,
+                                StringComparison.OrdinalIgnoreCase)
+
+                        ||
+
+                        blp.Compression
+                            .ToString()
+                            .Contains(search,
+                                StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+            ExtractedBLPList.ItemsSource =
+                results;
+        }
+
+        private void MDXTextureList_SelectionChanged(
+    object sender,
+    SelectionChangedEventArgs e)
+        {
+            if (MDXTextureList.SelectedItem is not string textureName)
+                return;
+
+            MDXTextureCandidateTitle.Text =
+                $"Candidates for: {textureName}";
+
+            // For now, show every extracted BLP.
+            // We'll add actual matching logic next.
+            MDXTextureCandidatesList.ItemsSource =
+                extractedBLPs;
         }
     }
 }
