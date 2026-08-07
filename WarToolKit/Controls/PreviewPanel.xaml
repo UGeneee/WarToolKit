@@ -43,12 +43,13 @@
                     Text="Resolution: Unknown"/>
 
                 <TextBlock
-                    x:Name="FormatText"
-                    Margin="0,5,0,0"/>
-
-                <TextBlock
                     x:Name="SizeText"
                     Text="Size:"/>
+
+                <TextBlock
+                    x:Name="FormatText"
+                    Margin="0,5,0,0"
+                    Text="Format:"/>        
 
             </StackPanel>
 

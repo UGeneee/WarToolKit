@@ -8,6 +8,9 @@
         Title="WarToolKit" 
         Height="650" 
         Width="1000"
+        AllowDrop="True"
+        Drop="Window_Drop"
+        DragOver="Window_DragOver"
         xmlns:controls="clr-namespace:WarToolKit.Controls">
 
     <DockPanel>
@@ -24,10 +27,11 @@
             <Separator/>
 
             <TextBox
-                x:Name="SearchBox"
-                Width="250"
-                Height="24"
-                VerticalContentAlignment="Center"/>
+            x:Name="SearchBox"
+            Width="250"
+            Height="24"
+            VerticalContentAlignment="Center"
+            TextChanged="SearchBox_TextChanged"/>
 
         </ToolBar>
 
@@ -103,31 +107,49 @@
                     BorderThickness="1"
                     BorderBrush="Gray">
 
-                <ListView
-                    x:Name="FileList"
-                    SelectionChanged="FileList_SelectionChanged">
+                <TabControl Grid.Column="1">
 
-                    <ListView.View>
+                    <TabItem Header="Textures">
 
-                        <GridView>
+                        <ListView
+    x:Name="FileList"
+    SelectionChanged="FileList_SelectionChanged"
+    GridViewColumnHeader.Click="GridViewColumnHeader_Click">
 
-                            <GridViewColumn Header="Filename"
-                                            Width="350"
-                                            DisplayMemberBinding="{Binding Name}"/>
+                            <ListView.View>
 
-                            <GridViewColumn Header="Extension"
-                                            Width="80"
-                                            DisplayMemberBinding="{Binding Extension}"/>
+                                <GridView>
 
-                            <GridViewColumn Header="Size"
-                                            Width="100"
-                                            DisplayMemberBinding="{Binding FormattedFileSize}"/>
+                                    <GridViewColumn Header="Filename"
+                Width="350"
+                DisplayMemberBinding="{Binding Name}"/>
 
-                        </GridView>
+                                    <GridViewColumn Header="Extension"
+                Width="80"
+                DisplayMemberBinding="{Binding Extension}"/>
 
-                    </ListView.View>
+                                    <GridViewColumn Header="Size"
+                Width="100"
+                DisplayMemberBinding="{Binding FormattedFileSize}"/>
 
-                </ListView>
+                                </GridView>
+
+                            </ListView.View>
+
+                        </ListView>
+
+                    </TabItem>
+
+                    <TabItem Header="Models">
+
+                        <TextBlock
+            Margin="20"
+            FontSize="16"
+            Text="MDX support coming soon..." />
+
+                    </TabItem>
+
+                </TabControl>
 
             </Border>
 
